@@ -1,0 +1,31 @@
+name: NSE Bhav Copy Daily Fetch
+
+on:
+  # Runs every weekday at 6:30 PM IST = 13:00 UTC
+  schedule:
+    - cron: "0 13 * * 1-5"
+
+  # Also allows manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  fetch-bhav:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Bhav Copy fetcher
+        env:
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        run: python fetch_bhav.py
